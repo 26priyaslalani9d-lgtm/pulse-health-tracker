@@ -1007,8 +1007,32 @@ document.querySelector('[data-page="owner"]').addEventListener('click', () => {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
+      .then(reg => {
+        console.log('[PWA] SW registered:', reg.scope);
+        // Check for updates every load
+        reg.update();
+        // Listen for new SW waiting → auto-reload to apply
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          if (!newSW) return;
+          newSW.addEventListener('statechange', () => {
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+              // New version ready — reload page to use it
+              newSW.postMessage({ type: 'SKIP_WAITING' });
+              setTimeout(() => location.reload(), 300);
+            }
+          });
+        });
+      })
       .catch(err => console.warn('[PWA] SW registration failed:', err));
+
+    // Reload page when new SW takes control
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      location.reload();
+    });
   });
 }
 
