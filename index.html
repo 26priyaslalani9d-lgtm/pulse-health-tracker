@@ -18,6 +18,12 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<!-- ============ FIREBASE SDK ============ -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
 <style>
 :root {
   --blue:#3B82F6; --blue-dark:#1D4ED8; --blue-soft:#DBEAFE;
@@ -236,9 +242,73 @@ fieldset label:last-child{margin-bottom:0}
 @media (max-width:1100px){.highlight-row{grid-template-columns:repeat(2,1fr)}.quick-grid{grid-template-columns:repeat(2,1fr)}.card-row{grid-template-columns:1fr}.hero-stats{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:16px}.hamburger{display:block}.hero-banner{flex-direction:column;align-items:flex-start;padding:20px}.hero-stats{grid-template-columns:repeat(2,1fr);width:100%}.page-header h1{font-size:22px}.full-log-grid{grid-template-columns:1fr}.heatmap{grid-template-columns:repeat(10,1fr)}}
 @media (max-width:480px){.highlight-row,.quick-grid{grid-template-columns:1fr}.hero-stats{grid-template-columns:1fr 1fr}.topbar-search{display:none}}
+
+/* ============ AUTH GATE ============ */
+.auth-gate{position:fixed;inset:0;background:linear-gradient(135deg,#3B82F6 0%,#10B981 50%,#FF6B6B 100%);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .4s ease}
+.auth-card{background:white;border-radius:24px;padding:40px 36px;width:min(92vw,420px);box-shadow:0 25px 80px rgba(0,0,0,.35);animation:slideUp .4s ease}
+.auth-logo{width:72px;height:72px;background:linear-gradient(135deg,#3B82F6,#10B981,#FF6B6B);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;color:white;box-shadow:0 8px 24px rgba(59,130,246,.4);animation:pulse 2.5s infinite}
+.auth-card h2{text-align:center;font-size:24px;font-weight:800;color:#0F172A;margin-bottom:6px;letter-spacing:-.3px}
+.auth-card .sub{text-align:center;color:#64748B;font-size:14px;margin-bottom:24px}
+.auth-form{display:flex;flex-direction:column;gap:14px}
+.auth-form input{padding:14px 16px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;color:#0F172A;background:#F8FAFC;outline:none;transition:all .2s;font-family:inherit}
+.auth-form input:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.15);background:white}
+.auth-form button{padding:14px;background:linear-gradient(135deg,#3B82F6,#10B981);color:white;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;transition:transform .2s,box-shadow .2s;font-family:inherit;margin-top:4px}
+.auth-form button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 24px rgba(59,130,246,.4)}
+.auth-form button:disabled{opacity:.6;cursor:not-allowed}
+.auth-switch{text-align:center;margin-top:18px;font-size:13px;color:#64748B}
+.auth-switch a{color:#3B82F6;cursor:pointer;font-weight:600;margin-left:4px}
+.auth-switch a:hover{text-decoration:underline}
+.auth-error{background:#FEE2E2;color:#DC2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none;font-weight:500}
+.auth-error.show{display:block;animation:fadeIn .2s ease}
+.auth-success{background:#D1FAE5;color:#047857;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none;font-weight:500}
+.auth-success.show{display:block;animation:fadeIn .2s ease}
+body.auth-required .sidebar,body.auth-required .main{visibility:hidden;pointer-events:none}
+body.auth-ready .auth-gate{display:none}
+.owner-only{display:none !important}
+body.is-owner .owner-only{display:flex !important}
+.logout-btn{padding:8px 14px;background:var(--coral-soft);color:var(--coral-dark);border-radius:8px;font-size:12px;font-weight:600;transition:all .2s}
+.logout-btn:hover{background:var(--coral);color:white}
+
+/* ============ OWNER DASHBOARD ============ */
+.owner-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.owner-stat{background:var(--card);border-radius:14px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .25s}
+.owner-stat:hover{transform:translateY(-4px)}
+.owner-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#3B82F6,#10B981,#FF6B6B)}
+.owner-stat span{font-size:12px;color:var(--text-soft);text-transform:uppercase;font-weight:600;letter-spacing:.5px}
+.owner-stat strong{display:block;font-size:32px;font-weight:800;margin-top:6px;color:var(--text)}
+.owner-stat .ico{position:absolute;top:14px;right:16px;font-size:22px;opacity:.4}
+.owner-table-wrap{overflow-x:auto;border-radius:10px}
+.owner-table{width:100%;border-collapse:collapse;min-width:500px}
+.owner-table th{text-align:left;padding:12px 14px;background:var(--bg);font-size:11px;color:var(--text-soft);text-transform:uppercase;font-weight:700;letter-spacing:.5px;border-bottom:2px solid var(--border)}
+.owner-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
+.owner-table tr:hover td{background:var(--bg)}
+.owner-table .email-cell{font-weight:600;color:var(--blue)}
+.dot-online{display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981;margin-right:6px;box-shadow:0 0 8px #10B981;vertical-align:middle}
+.owner-empty{padding:30px;text-align:center;color:var(--text-soft);font-size:13px}
 </style>
 </head>
-<body>
+<body class="auth-required">
+
+<!-- ============ AUTH GATE (login/signup) ============ -->
+<div class="auth-gate" id="authGate">
+  <div class="auth-card">
+    <div class="auth-logo">❤</div>
+    <h2 id="authTitle">Welcome to Pulse</h2>
+    <p class="sub" id="authSub">Log in to access your health dashboard</p>
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-success" id="authSuccess"></div>
+    <form class="auth-form" id="authForm">
+      <input type="text" id="authName" placeholder="Your name" style="display:none" />
+      <input type="email" id="authEmail" placeholder="Email" required autocomplete="email" />
+      <input type="password" id="authPassword" placeholder="Password (min 6 characters)" required minlength="6" autocomplete="current-password" />
+      <button type="submit" id="authSubmit">Log In</button>
+    </form>
+    <div class="auth-switch">
+      <span id="authSwitchText">Don't have an account?</span>
+      <a id="authSwitchLink">Sign up</a>
+    </div>
+  </div>
+</div>
 
 <aside class="sidebar" id="sidebar">
   <div class="logo">
@@ -253,6 +323,7 @@ fieldset label:last-child{margin-bottom:0}
     <button class="nav-item" data-page="vitals"><span class="nav-icon">❤️</span><span>Vitals</span></button>
     <button class="nav-item" data-page="goals"><span class="nav-icon">🎯</span><span>Goals & Reports</span></button>
     <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+    <button class="nav-item owner-only" data-page="owner"><span class="nav-icon">👑</span><span>Owner Dashboard</span></button>
   </nav>
   <div class="sidebar-footer">
     <button class="quick-log-btn" id="openFullLog"><span>＋</span> Log Today</button>
@@ -267,6 +338,7 @@ fieldset label:last-child{margin-bottom:0}
       <button class="icon-btn" id="themeToggle" title="Toggle theme">🌙</button>
       <button class="icon-btn" id="notifBtn" title="Reminders">🔔</button>
       <div class="profile-chip"><div class="avatar" id="topAvatar">Y</div><span id="topName">You</span></div>
+      <button class="logout-btn" id="logoutBtn" title="Log out">🚪 Log out</button>
     </div>
   </header>
 
@@ -397,6 +469,32 @@ fieldset label:last-child{margin-bottom:0}
     <div class="card"><div class="card-header"><h3>📋 Weekly Report</h3><button class="chip-btn" id="exportReport">⬇ Export</button></div><div class="report" id="weeklyReport"></div></div>
   </section>
 
+  <section class="page owner-only" id="page-owner">
+    <div class="page-header">
+      <h1>👑 Owner Dashboard</h1>
+      <button class="chip-btn" id="refreshOwner">🔄 Refresh</button>
+    </div>
+    <div class="quote-strip" style="border-left-color:#FBBF24"><span class="quote-icon">🔒</span><p style="font-style:normal">This page is only visible to you. Other users cannot see these stats.</p></div>
+    <div class="owner-stats">
+      <div class="owner-stat"><span class="ico">👥</span><span>Total Users</span><strong id="oTotalUsers">—</strong></div>
+      <div class="owner-stat"><span class="ico">🌐</span><span>Total Visits</span><strong id="oTotalVisits">—</strong></div>
+      <div class="owner-stat"><span class="ico">📅</span><span>Logins Today</span><strong id="oLoginsToday">—</strong></div>
+      <div class="owner-stat"><span class="ico">📈</span><span>Active (7 days)</span><strong id="oActive7d">—</strong></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>👥 Registered Users</h3></div>
+      <div class="owner-table-wrap"><table class="owner-table" id="usersTable"><thead><tr><th>Email</th><th>Name</th><th>Joined</th><th>Last Login</th><th>Logins</th></tr></thead><tbody id="usersBody"><tr><td colspan="5" class="owner-empty">Loading…</td></tr></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>🕒 Recent Login Activity</h3></div>
+      <div class="owner-table-wrap"><table class="owner-table"><thead><tr><th>Email</th><th>When</th><th>Device</th></tr></thead><tbody id="loginsBody"><tr><td colspan="3" class="owner-empty">Loading…</td></tr></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>🌐 Recent Visitors (anonymous)</h3></div>
+      <div class="owner-table-wrap"><table class="owner-table"><thead><tr><th>When</th><th>Device</th><th>Source</th></tr></thead><tbody id="visitsBody"><tr><td colspan="3" class="owner-empty">Loading…</td></tr></tbody></table></div>
+    </div>
+  </section>
+
   <section class="page" id="page-settings">
     <div class="page-header"><h1>⚙️ Settings</h1></div>
     <div class="card"><div class="card-header"><h3>👤 Your Profile</h3></div>
@@ -483,7 +581,7 @@ const STORAGE_KEY='pulse_health_tracker_v1';
 const defaultState={profile:{name:'Friend',age:null,height:null,weight:null,gender:'',photo:''},goals:{steps:10000,cals:2000,water:8,sleep:8,workouts:5},reminders:{water:false,meals:false,workout:false,bed:false},theme:'light',points:0,badges:[],logs:{}};
 let state=loadState(),charts={};
 function loadState(){try{const s=localStorage.getItem(STORAGE_KEY);if(!s)return JSON.parse(JSON.stringify(defaultState));const p=JSON.parse(s);return{...JSON.parse(JSON.stringify(defaultState)),...p,profile:{...defaultState.profile,...(p.profile||{})},goals:{...defaultState.goals,...(p.goals||{})},reminders:{...defaultState.reminders,...(p.reminders||{})}}}catch(e){return JSON.parse(JSON.stringify(defaultState))}}
-function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));try{cloudSync()}catch(e){}}
 const $=id=>document.getElementById(id);
 const todayKey=()=>new Date().toISOString().slice(0,10);
 const dateKey=d=>d.toISOString().slice(0,10);
@@ -586,6 +684,324 @@ applyTheme();
 setupReminders();
 maybeEarnBadges();
 renderAll();
+
+// ============================================================
+// FIREBASE — Auth, Cloud Sync, Visit Tracking, Owner Dashboard
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBRcefm0NaPhHTwpz_awATDBLPXvcKtW9g",
+  authDomain: "pulse-health-tracker.firebaseapp.com",
+  projectId: "pulse-health-tracker",
+  storageBucket: "pulse-health-tracker.firebasestorage.app",
+  messagingSenderId: "952810804121",
+  appId: "1:952810804121:web:b22ee69d9e4c74a78b3908",
+  measurementId: "G-XZPPD6NB5Q"
+};
+const OWNER_EMAIL = '26priyaslalani9d@gmail.com';
+
+let currentUser = null;
+let authMode = 'login';
+let fbAuth = null, fbDb = null, cloudReady = false;
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  fbAuth = firebase.auth();
+  fbDb = firebase.firestore();
+  cloudReady = true;
+  try { firebase.analytics(); } catch(e) { console.warn('Analytics init failed:', e); }
+} catch (e) {
+  console.error('Firebase init failed:', e);
+  document.body.classList.remove('auth-required');
+  document.body.classList.add('auth-ready');
+  toast('⚠️ Could not connect to cloud — running offline');
+}
+
+// ---------- VISIT TRACKING (anonymous) ----------
+if (cloudReady && !sessionStorage.getItem('visitLogged')) {
+  fbDb.collection('visits').add({
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    device: /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+    browser: (navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge|Opera)/i)||['Unknown'])[0],
+    referrer: document.referrer || 'Direct',
+    language: navigator.language || 'unknown'
+  }).then(()=>sessionStorage.setItem('visitLogged','1')).catch(e=>console.warn('Visit log failed:',e));
+}
+
+// ---------- CLOUD SYNC ----------
+let cloudSyncTimer = null;
+function cloudSync() {
+  if (!cloudReady || !currentUser) return;
+  clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(() => {
+    fbDb.collection('users').doc(currentUser.uid).set({
+      healthData: JSON.stringify(state),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(e => console.warn('Cloud sync error:', e));
+  }, 800);
+}
+
+// ---------- AUTH UI ----------
+function showAuthError(msg) {
+  const e = $('authError'); e.textContent = msg; e.classList.add('show');
+  $('authSuccess').classList.remove('show');
+}
+function showAuthSuccess(msg) {
+  const e = $('authSuccess'); e.textContent = msg; e.classList.add('show');
+  $('authError').classList.remove('show');
+}
+function clearAuthMessages() {
+  $('authError').classList.remove('show');
+  $('authSuccess').classList.remove('show');
+}
+
+function switchAuthMode() {
+  authMode = authMode === 'login' ? 'signup' : 'login';
+  if (authMode === 'signup') {
+    $('authTitle').textContent = 'Create Your Account';
+    $('authSub').textContent = 'Join Pulse to start tracking your health';
+    $('authName').style.display = 'block';
+    $('authName').required = true;
+    $('authSubmit').textContent = 'Sign Up';
+    $('authSwitchText').textContent = 'Already have an account?';
+    $('authSwitchLink').textContent = 'Log in';
+    $('authPassword').setAttribute('autocomplete', 'new-password');
+  } else {
+    $('authTitle').textContent = 'Welcome Back';
+    $('authSub').textContent = 'Log in to access your health dashboard';
+    $('authName').style.display = 'none';
+    $('authName').required = false;
+    $('authSubmit').textContent = 'Log In';
+    $('authSwitchText').textContent = "Don't have an account?";
+    $('authSwitchLink').textContent = 'Sign up';
+    $('authPassword').setAttribute('autocomplete', 'current-password');
+  }
+  clearAuthMessages();
+}
+
+$('authSwitchLink').addEventListener('click', switchAuthMode);
+
+$('authForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearAuthMessages();
+  if (!cloudReady) { showAuthError('Cloud not connected. Try refreshing.'); return; }
+  const email = $('authEmail').value.trim();
+  const password = $('authPassword').value;
+  const name = $('authName').value.trim();
+  const btn = $('authSubmit');
+  btn.disabled = true;
+  btn.textContent = authMode === 'signup' ? 'Creating account…' : 'Logging in…';
+  try {
+    if (authMode === 'signup') {
+      const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
+      if (name) {
+        await cred.user.updateProfile({ displayName: name });
+      }
+      await fbDb.collection('users').doc(cred.user.uid).set({
+        email, name: name || email.split('@')[0],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        loginCount: 1,
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+      showAuthSuccess('🎉 Account created!');
+    } else {
+      await fbAuth.signInWithEmailAndPassword(email, password);
+    }
+  } catch (err) {
+    const code = (err.code || '').replace('auth/', '');
+    const friendly = {
+      'invalid-email': 'That email doesn\'t look right.',
+      'user-not-found': 'No account with that email — try signing up!',
+      'wrong-password': 'Wrong password.',
+      'invalid-credential': 'Wrong email or password.',
+      'email-already-in-use': 'That email is already registered — try logging in.',
+      'weak-password': 'Password must be at least 6 characters.',
+      'network-request-failed': 'No internet connection.',
+      'too-many-requests': 'Too many tries. Wait a minute and retry.'
+    }[code] || err.message || 'Something went wrong.';
+    showAuthError('⚠️ ' + friendly);
+    btn.disabled = false;
+    btn.textContent = authMode === 'signup' ? 'Sign Up' : 'Log In';
+  }
+});
+
+// ---------- AUTH STATE LISTENER ----------
+if (cloudReady) {
+  fbAuth.onAuthStateChanged(async (user) => {
+    if (user) {
+      currentUser = user;
+      const isOwner = user.email === OWNER_EMAIL;
+      document.body.classList.remove('auth-required');
+      document.body.classList.add('auth-ready');
+      document.body.classList.toggle('is-owner', isOwner);
+
+      // Track login event
+      fbDb.collection('loginEvents').add({
+        uid: user.uid,
+        email: user.email,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        device: /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop'
+      }).catch(()=>{});
+
+      // Update user doc
+      fbDb.collection('users').doc(user.uid).set({
+        email: user.email,
+        name: user.displayName || user.email.split('@')[0],
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+        loginCount: firebase.firestore.FieldValue.increment(1)
+      }, { merge: true }).catch(()=>{});
+
+      // Load cloud data
+      try {
+        const doc = await fbDb.collection('users').doc(user.uid).get();
+        if (doc.exists && doc.data().healthData) {
+          const cloud = JSON.parse(doc.data().healthData);
+          state = { ...state, ...cloud,
+            profile: { ...state.profile, ...(cloud.profile||{}) }
+          };
+        }
+        if ((!state.profile.name || state.profile.name === 'Friend') && user.displayName) {
+          state.profile.name = user.displayName;
+        }
+      } catch(e) { console.warn('Could not load cloud data:', e); }
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      applyTheme();
+      renderAll();
+      if (isOwner) {
+        toast('👑 Welcome back, Owner!');
+        loadOwnerDashboard();
+      } else {
+        toast('👋 Welcome, ' + (state.profile.name || 'friend') + '!');
+      }
+    } else {
+      currentUser = null;
+      document.body.classList.add('auth-required');
+      document.body.classList.remove('auth-ready', 'is-owner');
+    }
+  });
+}
+
+// ---------- LOGOUT ----------
+$('logoutBtn').addEventListener('click', async () => {
+  if (!confirm('Log out of Pulse?')) return;
+  try {
+    await fbAuth.signOut();
+    toast('👋 Logged out');
+    setTimeout(() => location.reload(), 600);
+  } catch(e) { toast('Logout failed'); }
+});
+
+// ---------- OWNER DASHBOARD ----------
+function timeAgo(date) {
+  if (!date) return '—';
+  const d = date.toDate ? date.toDate() : new Date(date);
+  const diff = Date.now() - d.getTime();
+  const m = Math.floor(diff/60000), h = Math.floor(diff/3600000), days = Math.floor(diff/86400000);
+  if (days > 0) return days + 'd ago';
+  if (h > 0) return h + 'h ago';
+  if (m > 0) return m + 'm ago';
+  return 'Just now';
+}
+function fmtDate(date) {
+  if (!date) return '—';
+  const d = date.toDate ? date.toDate() : new Date(date);
+  return d.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
+}
+
+async function loadOwnerDashboard() {
+  if (!cloudReady || !currentUser || currentUser.email !== OWNER_EMAIL) return;
+  try {
+    // Users
+    const usersSnap = await fbDb.collection('users').get();
+    const users = [];
+    usersSnap.forEach(d => users.push({ id: d.id, ...d.data() }));
+    $('oTotalUsers').textContent = users.length;
+
+    // Login events (recent 100)
+    const loginsSnap = await fbDb.collection('loginEvents').orderBy('timestamp','desc').limit(100).get();
+    const logins = [];
+    loginsSnap.forEach(d => logins.push({ id: d.id, ...d.data() }));
+
+    // Visits
+    const visitsSnap = await fbDb.collection('visits').orderBy('timestamp','desc').limit(100).get();
+    const visits = [];
+    visitsSnap.forEach(d => visits.push({ id: d.id, ...d.data() }));
+
+    // Total visits count (full collection size — fetch separately for accuracy)
+    const allVisitsSnap = await fbDb.collection('visits').get();
+    $('oTotalVisits').textContent = allVisitsSnap.size;
+
+    // Logins today
+    const today = new Date(); today.setHours(0,0,0,0);
+    const loginsToday = logins.filter(l => l.timestamp && l.timestamp.toDate() >= today).length;
+    $('oLoginsToday').textContent = loginsToday;
+
+    // Active in last 7 days (distinct uids)
+    const weekAgo = new Date(Date.now() - 7*24*60*60*1000);
+    const activeUids = new Set();
+    logins.forEach(l => { if (l.timestamp && l.timestamp.toDate() >= weekAgo) activeUids.add(l.uid); });
+    $('oActive7d').textContent = activeUids.size;
+
+    // Users table
+    const ub = $('usersBody');
+    ub.innerHTML = '';
+    if (users.length === 0) ub.innerHTML = '<tr><td colspan="5" class="owner-empty">No users yet.</td></tr>';
+    users.sort((a,b) => {
+      const ta = a.lastLogin?.toDate?.()?.getTime() || 0;
+      const tb = b.lastLogin?.toDate?.()?.getTime() || 0;
+      return tb - ta;
+    }).forEach(u => {
+      const online = u.lastLogin && (Date.now() - u.lastLogin.toDate().getTime() < 5*60*1000);
+      ub.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td class="email-cell">${online?'<span class="dot-online"></span>':''}${u.email||'—'}</td>
+          <td>${u.name||'—'}</td>
+          <td>${fmtDate(u.createdAt)}</td>
+          <td>${timeAgo(u.lastLogin)}</td>
+          <td>${u.loginCount||1}</td>
+        </tr>`);
+    });
+
+    // Logins table
+    const lb = $('loginsBody');
+    lb.innerHTML = '';
+    if (logins.length === 0) lb.innerHTML = '<tr><td colspan="3" class="owner-empty">No logins yet.</td></tr>';
+    logins.slice(0, 30).forEach(l => {
+      lb.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td class="email-cell">${l.email||'—'}</td>
+          <td>${timeAgo(l.timestamp)}</td>
+          <td>${l.device||'—'}</td>
+        </tr>`);
+    });
+
+    // Visits table
+    const vb = $('visitsBody');
+    vb.innerHTML = '';
+    if (visits.length === 0) vb.innerHTML = '<tr><td colspan="3" class="owner-empty">No visits yet.</td></tr>';
+    visits.slice(0, 30).forEach(v => {
+      vb.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td>${timeAgo(v.timestamp)}</td>
+          <td>${v.device||'—'} · ${v.browser||''}</td>
+          <td>${v.referrer||'Direct'}</td>
+        </tr>`);
+    });
+  } catch(e) {
+    console.error('Owner dashboard load failed:', e);
+    toast('Failed to load owner stats: ' + e.message);
+  }
+}
+
+$('refreshOwner').addEventListener('click', () => {
+  $('refreshOwner').textContent = '⏳ Loading…';
+  loadOwnerDashboard().finally(() => $('refreshOwner').textContent = '🔄 Refresh');
+});
+
+// Reload owner dashboard when nav clicked
+document.querySelector('[data-page="owner"]').addEventListener('click', () => {
+  setTimeout(loadOwnerDashboard, 100);
+});
 
 // ============ PWA — Service Worker Registration ============
 if ('serviceWorker' in navigator) {
