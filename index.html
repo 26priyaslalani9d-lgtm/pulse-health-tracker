@@ -2,8 +2,20 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Pulse — Personal Health Tracker</title>
+
+<!-- ============ PWA META ============ -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#3B82F6" />
+<meta name="description" content="Track your fitness, nutrition, sleep & vitals — a beautiful personal health dashboard." />
+<link rel="icon" href="icon-192.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="icon-192.svg" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Pulse" />
+<meta name="mobile-web-app-capable" content="yes" />
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -574,6 +586,61 @@ applyTheme();
 setupReminders();
 maybeEarnBadges();
 renderAll();
+
+// ============ PWA — Service Worker Registration ============
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
+      .catch(err => console.warn('[PWA] SW registration failed:', err));
+  });
+}
+
+// ============ PWA — Install Prompt ============
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  showInstallButton();
+});
+
+function showInstallButton() {
+  if (document.getElementById('pwaInstallBtn')) return;
+  const btn = document.createElement('button');
+  btn.id = 'pwaInstallBtn';
+  btn.innerHTML = '📱 Install App';
+  btn.style.cssText = 'position:fixed;bottom:30px;right:30px;padding:14px 22px;background:linear-gradient(135deg,#3B82F6,#10B981);color:white;border:none;border-radius:30px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 10px 30px rgba(59,130,246,.45);z-index:300;font-family:inherit;animation:slideUp .4s ease;';
+  btn.onmouseenter = () => btn.style.transform = 'translateY(-3px) scale(1.05)';
+  btn.onmouseleave = () => btn.style.transform = 'translateY(0) scale(1)';
+  btn.onclick = async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    const { outcome } = await deferredInstallPrompt.userChoice;
+    if (outcome === 'accepted') {
+      toast('🎉 App installed!');
+      btn.remove();
+    }
+    deferredInstallPrompt = null;
+  };
+  document.body.appendChild(btn);
+}
+
+window.addEventListener('appinstalled', () => {
+  toast('✅ Pulse installed on your device!');
+  const b = document.getElementById('pwaInstallBtn'); if (b) b.remove();
+});
+
+// iOS doesn't fire beforeinstallprompt — show hint instead
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+if (isIOS && !isStandalone) {
+  setTimeout(() => {
+    if (!sessionStorage.getItem('iosHintShown')) {
+      toast('📱 Tap Share → Add to Home Screen to install');
+      sessionStorage.setItem('iosHintShown', '1');
+    }
+  }, 3000);
+}
 </script>
 </body>
 </html>

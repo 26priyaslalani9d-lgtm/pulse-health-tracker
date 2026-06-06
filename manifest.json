@@ -1,0 +1,46 @@
+{
+  "name": "Pulse — Health Tracker",
+  "short_name": "Pulse",
+  "description": "Track your fitness, nutrition, sleep & vitals — a beautiful personal health dashboard.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F4F7FB",
+  "theme_color": "#3B82F6",
+  "categories": ["health", "fitness", "lifestyle", "productivity"],
+  "icons": [
+    {
+      "src": "icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Log Today",
+      "short_name": "Log",
+      "description": "Quickly log today's health data",
+      "url": "./?action=log"
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Home",
+      "description": "View your health dashboard",
+      "url": "./"
+    }
+  ]
+}
