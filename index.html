@@ -240,8 +240,224 @@ fieldset label:last-child{margin-bottom:0}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 @media (max-width:1100px){.highlight-row{grid-template-columns:repeat(2,1fr)}.quick-grid{grid-template-columns:repeat(2,1fr)}.card-row{grid-template-columns:1fr}.hero-stats{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:16px}.hamburger{display:block}.hero-banner{flex-direction:column;align-items:flex-start;padding:20px}.hero-stats{grid-template-columns:repeat(2,1fr);width:100%}.page-header h1{font-size:22px}.full-log-grid{grid-template-columns:1fr}.heatmap{grid-template-columns:repeat(10,1fr)}}
-@media (max-width:480px){.highlight-row,.quick-grid{grid-template-columns:1fr}.hero-stats{grid-template-columns:1fr 1fr}.topbar-search{display:none}}
+
+/* ============ BOTTOM NAV & MORE SHEET (default: hidden on desktop) ============ */
+.bottom-nav,.more-sheet{display:none}
+
+/* ============ MOBILE LAYOUT (≤768px) ============ */
+@media (max-width:768px){
+  /* Hide sidebar entirely on mobile, show bottom nav instead */
+  .sidebar{display:none !important}
+  .hamburger{display:none !important}
+  .main{margin-left:0;padding:14px 14px 100px;min-height:100vh}
+
+  /* Compact topbar */
+  .topbar{gap:8px;margin-bottom:14px;padding:6px 0}
+  .topbar-search{display:none}
+  .topbar-actions{gap:6px;margin-left:auto}
+  .icon-btn{width:38px;height:38px;font-size:16px}
+  .profile-chip{padding:4px 10px 4px 4px}
+  .avatar{width:30px;height:30px;font-size:13px}
+  #topName{display:none}
+  .logout-btn{padding:7px 10px;font-size:11px}
+
+  /* Hero banner — stacked, compact */
+  .hero-banner{
+    flex-direction:column;align-items:stretch;
+    padding:18px 18px;border-radius:18px;gap:14px;margin-bottom:14px
+  }
+  .hero-banner::before{width:240px;height:240px}
+  .hero-left{gap:12px}
+  .hero-avatar{width:56px;height:56px;font-size:24px;border-width:2px}
+  .hero-left h2{font-size:13px}
+  .hero-left h1{font-size:22px;margin:2px 0}
+  .hero-left p{font-size:11px}
+  .hero-stats{grid-template-columns:repeat(2,1fr);gap:8px;width:100%}
+  .hero-stat{padding:10px 12px;gap:8px;border-radius:12px}
+  .hs-icon{font-size:18px}
+  .hero-stat strong{font-size:14px}
+  .hero-stat small{font-size:10px}
+
+  /* Quote */
+  .quote-strip{padding:11px 14px;font-size:13px;margin-bottom:14px;border-radius:10px}
+  .quote-icon{font-size:18px}
+  #dailyQuote{font-size:12px}
+
+  /* Highlight cards — 2 cols */
+  .highlight-row{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+  .hl-card{padding:14px 14px;gap:10px;border-radius:14px}
+  .hl-icon{width:42px;height:42px;font-size:20px;border-radius:11px}
+  .hl-body span{font-size:10px}
+  .hl-body h2{font-size:18px;margin:2px 0}
+  .hl-body h2 small{font-size:11px}
+  .hl-body p{font-size:10px}
+
+  /* All chart rows single column */
+  .card-row{grid-template-columns:1fr;gap:12px;margin-bottom:14px}
+  .card{padding:16px;border-radius:14px;margin-bottom:14px}
+  .card-header{margin-bottom:12px}
+  .card-header h3{font-size:14px}
+  .chart-card canvas{max-height:220px !important}
+  .chart-card.big canvas{max-height:240px !important}
+
+  /* Quick grid — 2 cols */
+  .quick-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .qa-card{padding:14px;border-radius:14px}
+  .qa-icon{font-size:22px}
+  .qa-card h4{font-size:13px;margin-bottom:8px}
+  .qa-metric{font-size:11px;padding:2px 0}
+  .qa-metric strong{font-size:13px}
+  .qa-add{width:28px;height:28px;font-size:16px}
+
+  /* Heatmap — fewer cols on mobile */
+  .heatmap{grid-template-columns:repeat(15,1fr);gap:3px}
+  .heatmap-legend{font-size:10px;gap:3px}
+  .legend-box{width:10px;height:10px}
+
+  /* Page header */
+  .page-header{flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .page-header h1{font-size:20px}
+  .primary-btn{padding:10px 16px;font-size:13px;border-radius:10px}
+
+  /* Forms — single column */
+  .full-log-grid{grid-template-columns:1fr;gap:12px}
+  .goals-form,.settings-form{grid-template-columns:1fr;gap:12px}
+  fieldset{padding:14px}
+  fieldset legend{font-size:13px}
+  label{font-size:12px}
+  input,select{padding:10px 12px;font-size:14px}
+
+  /* History list */
+  .history-item{padding:12px 14px}
+  .history-item .h-icon{font-size:18px}
+  .history-item .h-meta strong{font-size:13px}
+  .history-item .h-meta small{font-size:11px}
+  .history-item .h-val{font-size:12px}
+
+  /* Badges */
+  .badges-grid{grid-template-columns:repeat(3,1fr);gap:10px}
+  .badge-card{padding:14px 8px}
+  .badge-card .b-emoji{font-size:28px;margin-bottom:4px}
+  .badge-card strong{font-size:11px}
+  .badge-card small{font-size:9px}
+
+  /* Report */
+  .report-item{padding:12px}
+  .report-item span{font-size:10px}
+  .report-item strong{font-size:18px}
+
+  /* Modals — fill more, comfy padding */
+  .modal{width:96vw;max-height:92vh;border-radius:18px}
+  .modal.big-modal{width:96vw}
+  .modal-header{padding:16px 20px}
+  .modal-header h3{font-size:16px}
+  .modal-body{padding:18px}
+
+  /* Owner dashboard */
+  .owner-stats{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+  .owner-stat{padding:14px}
+  .owner-stat span{font-size:10px}
+  .owner-stat strong{font-size:22px;margin-top:4px}
+  .owner-stat .ico{font-size:18px;top:10px;right:12px}
+  .owner-table{font-size:12px}
+  .owner-table th,.owner-table td{padding:8px 10px}
+  .owner-table th{font-size:10px}
+
+  /* Auth gate — fill better on mobile */
+  .auth-card{padding:32px 24px;border-radius:20px}
+  .auth-logo{width:60px;height:60px;font-size:30px;margin-bottom:16px}
+  .auth-card h2{font-size:20px}
+  .auth-card .sub{font-size:13px;margin-bottom:20px}
+  .auth-form input{padding:13px 14px;font-size:14px}
+  .auth-form button{padding:13px;font-size:14px}
+
+  /* Toast above bottom nav */
+  .toast{bottom:90px;font-size:13px;padding:12px 20px}
+
+  /* Install button above bottom nav */
+  #pwaInstallBtn{bottom:90px !important;right:14px !important;padding:12px 18px !important;font-size:13px !important}
+
+  /* ============ BOTTOM NAV ============ */
+  .bottom-nav{
+    display:flex;
+    position:fixed;bottom:0;left:0;right:0;
+    height:64px;
+    background:var(--card);
+    border-top:1px solid var(--border);
+    box-shadow:0 -4px 20px rgba(0,0,0,.08);
+    padding:6px 12px;
+    padding-bottom:calc(6px + env(safe-area-inset-bottom));
+    z-index:90;
+    justify-content:space-around;
+    align-items:center
+  }
+  .bnav-item{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;padding:6px 12px;border-radius:12px;
+    color:var(--text-soft);
+    transition:all .2s;
+    min-width:56px;background:transparent;
+    -webkit-tap-highlight-color:transparent
+  }
+  .bnav-ico{font-size:22px;transition:transform .2s}
+  .bnav-item small{font-size:10px;font-weight:700;letter-spacing:.2px}
+  .bnav-item.active{color:var(--blue)}
+  .bnav-item.active .bnav-ico{transform:scale(1.15);filter:drop-shadow(0 2px 6px rgba(59,130,246,.4))}
+  .bnav-item:active{background:var(--blue-soft)}
+  .bnav-fab{
+    width:54px;height:54px;border-radius:50%;
+    background:linear-gradient(135deg,#3B82F6,#10B981,#FF6B6B);
+    color:white;font-size:26px;font-weight:800;
+    box-shadow:0 8px 24px rgba(59,130,246,.45),0 0 0 4px var(--card);
+    margin-top:-28px;
+    transition:transform .2s;
+    -webkit-tap-highlight-color:transparent
+  }
+  .bnav-fab:active{transform:scale(.92)}
+
+  /* ============ MORE SHEET ============ */
+  .more-sheet{display:none;position:fixed;inset:0;z-index:120}
+  .more-sheet.open{display:block}
+  .more-backdrop{
+    position:absolute;inset:0;
+    background:rgba(15,23,42,.5);backdrop-filter:blur(4px);
+    animation:fadeIn .2s ease
+  }
+  .more-content{
+    position:absolute;bottom:0;left:0;right:0;
+    background:var(--card);
+    border-top-left-radius:24px;border-top-right-radius:24px;
+    padding:12px 18px;
+    padding-bottom:calc(20px + env(safe-area-inset-bottom));
+    animation:slideUpSheet .35s cubic-bezier(.34,1.56,.64,1)
+  }
+  @keyframes slideUpSheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .more-handle{width:44px;height:5px;background:var(--border);border-radius:3px;margin:4px auto 14px}
+  .more-title{font-size:14px;color:var(--text-soft);margin-bottom:12px;text-transform:uppercase;font-weight:700;letter-spacing:1px;text-align:center}
+  .more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .more-item{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:6px;padding:16px 10px;
+    background:var(--bg);border-radius:14px;
+    color:var(--text);font-size:11px;font-weight:600;
+    transition:all .2s;
+    -webkit-tap-highlight-color:transparent;
+    text-align:center
+  }
+  .more-item > span:first-child{font-size:26px}
+  .more-item:active{background:var(--blue-soft);transform:scale(.96)}
+  .more-item.more-danger{background:var(--coral-soft);color:var(--coral-dark)}
+  .more-item.more-danger:active{background:var(--coral);color:white}
+}
+
+/* ============ SMALL PHONES (≤420px) ============ */
+@media (max-width:420px){
+  .highlight-row{grid-template-columns:repeat(2,1fr)}
+  .quick-grid{grid-template-columns:repeat(2,1fr)}
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .badges-grid{grid-template-columns:repeat(2,1fr)}
+  .owner-stats{grid-template-columns:repeat(2,1fr)}
+}
 
 /* ============ AUTH GATE ============ */
 .auth-gate{position:fixed;inset:0;background:linear-gradient(135deg,#3B82F6 0%,#10B981 50%,#FF6B6B 100%);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .4s ease}
@@ -574,6 +790,33 @@ body.is-owner .owner-only{display:flex !important}
   </div>
 </div>
 
+<!-- ============ MOBILE BOTTOM NAV ============ -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bnav-item active" data-page="dashboard"><span class="bnav-ico">🏠</span><small>Home</small></button>
+  <button class="bnav-item" data-page="fitness"><span class="bnav-ico">💪</span><small>Fitness</small></button>
+  <button class="bnav-fab" id="bnavFab" title="Log today">＋</button>
+  <button class="bnav-item" data-page="nutrition"><span class="bnav-ico">🥗</span><small>Food</small></button>
+  <button class="bnav-item" id="moreBtn"><span class="bnav-ico">⋯</span><small>More</small></button>
+</nav>
+
+<!-- ============ MOBILE MORE SHEET ============ -->
+<div class="more-sheet" id="moreSheet">
+  <div class="more-backdrop" id="moreBackdrop"></div>
+  <div class="more-content">
+    <div class="more-handle"></div>
+    <h3 class="more-title">More</h3>
+    <div class="more-grid">
+      <button class="more-item" data-page="sleep"><span>😴</span><span>Sleep & Mood</span></button>
+      <button class="more-item" data-page="vitals"><span>❤️</span><span>Vitals</span></button>
+      <button class="more-item" data-page="goals"><span>🎯</span><span>Goals & Reports</span></button>
+      <button class="more-item" data-page="settings"><span>⚙️</span><span>Settings</span></button>
+      <button class="more-item owner-only" data-page="owner"><span>👑</span><span>Owner</span></button>
+      <button class="more-item" id="moreTheme"><span>🌓</span><span>Theme</span></button>
+      <button class="more-item more-danger" id="moreLogout"><span>🚪</span><span>Log out</span></button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -598,7 +841,17 @@ function currentStreak(){let s=0,d=new Date();while(true){const k=dateKey(d),l=s
 function computeHealthScore(){const t=getLog();let s=0;s+=Math.min(25,(t.steps/state.goals.steps)*25);s+=Math.min(15,(t.water/state.goals.water)*15);if(t.sleepHrs>0){const d=Math.abs(t.sleepHrs-state.goals.sleep);s+=Math.max(0,20-d*4)}if(t.cals>0){const r=t.cals/state.goals.cals;s+=r<1.1?Math.min(15,r*15):Math.max(0,15-(r-1)*20)}if(t.workouts.length>0)s+=15;s+={great:10,good:8,okay:5,low:3,bad:1}[t.mood]||0;return Math.round(Math.min(100,s))}
 function computeBMI(){const w=state.profile.weight,h=state.profile.height;if(!w||!h)return{val:null,label:'Set weight & height'};const b=w/Math.pow(h/100,2);let l='Normal';if(b<18.5)l='Underweight';else if(b<25)l='Normal';else if(b<30)l='Overweight';else l='Obese';return{val:b.toFixed(1),label:l}}
 
-document.querySelectorAll('.nav-item').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));btn.classList.add('active');$('page-'+btn.dataset.page).classList.add('active');renderAll();$('sidebar').classList.remove('open')}));
+function navigateTo(page){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
+  document.querySelectorAll('.bnav-item[data-page]').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=$('page-'+page); if(pg) pg.classList.add('active');
+  renderAll();
+  $('sidebar').classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.nav-item').forEach(btn=>btn.addEventListener('click',()=>{ if(btn.dataset.page) navigateTo(btn.dataset.page); }));
+document.querySelectorAll('.bnav-item[data-page]').forEach(btn=>btn.addEventListener('click',()=>navigateTo(btn.dataset.page)));
 $('hamburger').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
 
 function applyTheme(){document.documentElement.setAttribute('data-theme',state.theme);$('themeToggle').textContent=state.theme==='dark'?'☀️':'🌙';Object.values(charts).forEach(c=>c&&c.destroy());charts={};renderAll()}
@@ -999,9 +1252,41 @@ $('refreshOwner').addEventListener('click', () => {
 });
 
 // Reload owner dashboard when nav clicked
-document.querySelector('[data-page="owner"]').addEventListener('click', () => {
-  setTimeout(loadOwnerDashboard, 100);
+document.querySelectorAll('[data-page="owner"]').forEach(el => {
+  el.addEventListener('click', () => setTimeout(loadOwnerDashboard, 100));
 });
+
+// ============ MOBILE BOTTOM-NAV INTERACTIONS ============
+function openMoreSheet() { $('moreSheet').classList.add('open'); }
+function closeMoreSheet() { $('moreSheet').classList.remove('open'); }
+
+$('moreBtn').addEventListener('click', openMoreSheet);
+$('moreBackdrop').addEventListener('click', closeMoreSheet);
+
+document.querySelectorAll('.more-item[data-page]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    closeMoreSheet();
+    navigateTo(btn.dataset.page);
+  });
+});
+
+$('moreLogout').addEventListener('click', () => {
+  closeMoreSheet();
+  $('logoutBtn').click();
+});
+
+$('moreTheme').addEventListener('click', () => {
+  closeMoreSheet();
+  $('themeToggle').click();
+});
+
+// FAB → open the full log modal
+$('bnavFab').addEventListener('click', () => {
+  $('openFullLog').click();
+});
+
+// Close more-sheet on Escape
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMoreSheet(); });
 
 // ============ PWA — Service Worker Registration ============
 if ('serviceWorker' in navigator) {
