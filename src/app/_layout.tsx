@@ -23,7 +23,7 @@ import { rescheduleStreakAtRisk } from '@/services/notifications';
 import { useGoalsStore } from '@/stores/useGoalsStore';
 import { useHealthStore } from '@/stores/useHealthStore';
 
-void SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 // Restore everything instantly from local cache before any health query runs.
 hydrateFromCache();
@@ -39,7 +39,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (fontsLoaded) void SplashScreen.hideAsync();
+    if (fontsLoaded) SplashScreen.hideAsync().catch(() => {});
   }, [fontsLoaded]);
 
   useEffect(() => {
