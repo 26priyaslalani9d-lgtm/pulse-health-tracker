@@ -1,0 +1,83 @@
+{
+  "expo": {
+    "name": "Pulse",
+    "slug": "pulse",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "pulse",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A0A0B",
+    "ios": {
+      "bundleIdentifier": "com.pulse.fitness",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "Pulse reads your steps, distance, energy, heart rate, sleep and workouts to show your daily health dashboard.",
+        "NSHealthUpdateUsageDescription": "Pulse saves workouts you record so they appear in Apple Health.",
+        "NSMotionUsageDescription": "Pulse uses motion data to show a live step counter while the app is open.",
+        "UIBackgroundModes": ["fetch", "processing"]
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.background-delivery": true
+      }
+    },
+    "android": {
+      "package": "com.pulse.fitness",
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0A0B",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "android.permission.health.READ_STEPS",
+        "android.permission.health.READ_DISTANCE",
+        "android.permission.health.READ_TOTAL_CALORIES_BURNED",
+        "android.permission.health.READ_ACTIVE_CALORIES_BURNED",
+        "android.permission.health.READ_HEART_RATE",
+        "android.permission.health.READ_SLEEP",
+        "android.permission.health.READ_EXERCISE",
+        "android.permission.health.WRITE_EXERCISE",
+        "android.permission.ACTIVITY_RECOGNITION",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-dev-client",
+      "expo-sqlite",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0A0A0B",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#34D26A",
+          "defaultChannel": "pulse-default"
+        }
+      ],
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "Pulse reads your steps, distance, energy, heart rate, sleep and workouts to show your daily health dashboard.",
+          "NSHealthUpdateUsageDescription": "Pulse saves workouts you record so they appear in Apple Health."
+        }
+      ],
+      "react-native-health-connect"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
