@@ -14,6 +14,7 @@ import { PromoCarousel } from '@/components/home/PromoCarousel';
 import { QuickActions } from '@/components/home/QuickActions';
 import { StreakCard } from '@/components/home/StreakCard';
 import { VitalsCards } from '@/components/home/VitalsCards';
+import { WebPreviewNotice } from '@/components/home/WebPreviewNotice';
 import { WorkoutSummaryCard } from '@/components/home/WorkoutSummaryCard';
 import { Card } from '@/components/ui/Card';
 import { PText } from '@/components/ui/PText';
@@ -74,6 +75,8 @@ export default function HomeScreen() {
           </PText>
           <DemoBadge />
         </View>
+
+        <WebPreviewNotice />
 
         <PromoCarousel />
 

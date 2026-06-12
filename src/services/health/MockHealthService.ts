@@ -4,6 +4,8 @@
  * "demo data" badge in the UI; never silently impersonates real data.
  */
 
+import { Platform } from 'react-native';
+
 import { addDays, dayKey, endOfDay, fromDayKey, lastNDayKeys, startOfDay } from '@/lib/dates';
 import type {
   DailyMetrics,
@@ -319,7 +321,10 @@ export const mockHealthService: HealthService = {
   },
 
   observeTodaySteps(cb) {
-    // Simulated stroll: a few steps every couple of seconds.
+    // On web the fake stroll reads as broken tracking — a browser can't count
+    // real steps, so the preview keeps today's number still instead of lying.
+    if (Platform.OS === 'web') return () => {};
+    // Simulated stroll (iOS Simulator): a few steps every couple of seconds.
     let total = 0;
     const interval = setInterval(() => {
       total += 2 + Math.floor(Math.random() * 4);
